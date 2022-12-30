@@ -3,9 +3,7 @@ package com.bohanzhang.japier;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.mvel2.MVEL;
-import org.springframework.boot.test.context.SpringBootTest;
 
-@SpringBootTest
 class JapierApplicationTests {
 
 	@Test
