@@ -24,7 +24,7 @@ public class SampleNodeContext implements NodeContext {
 
     private Map<String, Object> context;
 
-    public static NodeContext withMap(HashMap<String, Object> executeNodeContextMap) {
+    public static NodeContext withMap(Map<String, Object> executeNodeContextMap) {
         return SampleNodeContext.builder().context(executeNodeContextMap).build();
     }
 
