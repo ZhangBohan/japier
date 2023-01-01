@@ -12,6 +12,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutionException;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.endsWith;
@@ -23,7 +25,7 @@ class NodeExecutorTest extends BaseTest {
     private NodeExecutor executor;
 
     @Test
-    void execute() {
+    void execute() throws ExecutionException, InterruptedException {
         User user = new User();
         user.setName("test");
 
@@ -31,13 +33,14 @@ class NodeExecutorTest extends BaseTest {
                 .thenReturn(user);
 
         Node node = Node.builder().nodeType("github-lookup").code("g1").params(Map.of("user", "bohan")).build();
-        Object result = executor.execute(List.of(node), SampleNodeContext.builder().context(Map.of("user", "bohan")).build());
+        CompletableFuture<Object> future = executor.execute(List.of(node), SampleNodeContext.builder().context(Map.of("user", "bohan")).build());
+        Object result = future.get();
         log.info("result: {}", result);
         Assertions.assertNotNull(result);
     }
 
     @Test
-    void executeList() {
+    void executeList() throws ExecutionException, InterruptedException {
         User user = new User();
         user.setName("bohan");
 
@@ -46,7 +49,8 @@ class NodeExecutorTest extends BaseTest {
 
         Node node = Node.builder().nodeType("github-lookup").code("g1").params(Map.of("user", "bohan")).build();
         Node node2 = Node.builder().nodeType("github-lookup").code("g2").params(Map.of("user", "${g1.name}")).build();
-        Object result = executor.execute(List.of(node, node2), SampleNodeContext.EMPTY);
+        CompletableFuture<Object> future = executor.execute(List.of(node, node2), SampleNodeContext.EMPTY);
+        Object result = future.get();
         log.info("result: {}", result);
         Assertions.assertNotNull(result);
     }

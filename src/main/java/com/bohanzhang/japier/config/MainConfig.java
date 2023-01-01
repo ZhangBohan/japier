@@ -6,6 +6,8 @@ import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.springframework.web.client.RestTemplate;
 
 import java.util.concurrent.Executor;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 @Configuration
 public class MainConfig {
@@ -23,5 +25,10 @@ public class MainConfig {
     @Bean
     public RestTemplate getRestTemplate() {
         return new RestTemplate();
+    }
+
+    @Bean
+    public ExecutorService getExecutorService() {
+        return Executors.newFixedThreadPool(10);
     }
 }

@@ -10,6 +10,8 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutorService;
 
 @Service
 public class NodeExecutor {
@@ -17,12 +19,25 @@ public class NodeExecutor {
     @Autowired
     private Map<String, NodeHandler<?>> nodeHandlerMap;
 
+    @Autowired
+    private ExecutorService executorService;
+
     /**
      * Execute a flow node asynchronously.
      * @param nodes
      * @return
      */
-    public Object execute(@NonNull List<Node> nodes, NodeContext context) {
+    public CompletableFuture<Object> execute(@NonNull List<Node> nodes, NodeContext context) {
+        CompletableFuture<Object> completableFuture = new CompletableFuture<>();
+        executorService.submit(() -> {
+            Object result = asyncExecute(nodes, context);
+            completableFuture.complete(result);
+        });
+
+        return completableFuture;
+    }
+
+    public Object asyncExecute(@NonNull List<Node> nodes, NodeContext context) {
         Object result = null;
         for (Node node : nodes) {
             String nodeType = node.getNodeType();
