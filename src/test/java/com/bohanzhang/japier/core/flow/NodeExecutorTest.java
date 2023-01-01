@@ -30,9 +30,23 @@ class NodeExecutorTest extends BaseTest {
         Mockito.when(restTemplate.getForObject(endsWith("bohan"), any()))
                 .thenReturn(user);
 
-        Node node = new Node();
-        node.setNodeType("github-lookup");
+        Node node = Node.builder().nodeType("github-lookup").code("g1").params(Map.of("user", "bohan")).build();
         Object result = executor.execute(List.of(node), SampleNodeContext.builder().context(Map.of("user", "bohan")).build());
+        log.info("result: {}", result);
+        Assertions.assertNotNull(result);
+    }
+
+    @Test
+    void executeList() {
+        User user = new User();
+        user.setName("bohan");
+
+        Mockito.when(restTemplate.getForObject(endsWith("bohan"), any()))
+                .thenReturn(user);
+
+        Node node = Node.builder().nodeType("github-lookup").code("g1").params(Map.of("user", "bohan")).build();
+        Node node2 = Node.builder().nodeType("github-lookup").code("g2").params(Map.of("user", "${g1.name}")).build();
+        Object result = executor.execute(List.of(node, node2), SampleNodeContext.EMPTY);
         log.info("result: {}", result);
         Assertions.assertNotNull(result);
     }

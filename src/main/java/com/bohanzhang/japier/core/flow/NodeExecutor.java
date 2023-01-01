@@ -28,8 +28,10 @@ public class NodeExecutor {
             String nodeType = node.getNodeType();
             NodeHandler<?> nodeHandler = nodeHandlerMap.get(nodeType);
             if (nodeHandler instanceof DefaultNodeHandler<?> handler) {
-                result = handler.handle(node, context);
-                context.merge(result);
+                // node params add to node execute context
+                NodeContext executeNodeContext = context.merge(node.getParams());
+                result = handler.handle(node, executeNodeContext);
+                context = context.merge(Map.of(node.getCode(), result));
             }
         }
         return result;

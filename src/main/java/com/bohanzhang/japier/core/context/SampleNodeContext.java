@@ -6,6 +6,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.mvel2.templates.TemplateRuntime;
 
 import java.util.Collections;
 import java.util.HashMap;
@@ -23,6 +24,10 @@ public class SampleNodeContext implements NodeContext {
 
     private Map<String, Object> context;
 
+    public static NodeContext withMap(HashMap<String, Object> executeNodeContextMap) {
+        return SampleNodeContext.builder().context(executeNodeContextMap).build();
+    }
+
     @Override
     public String getString(String key) {
         return get(key, String.class);
@@ -39,11 +44,18 @@ public class SampleNodeContext implements NodeContext {
     }
 
     @Override
-    public void merge(Object newContextData) {
-        HashMap<String, Object> convertValue = OBJECT_MAPPER.convertValue(newContextData, new TypeReference<>() {
+    public NodeContext merge(Object newContextData) {
+
+        Map<String, Object> convertValue = OBJECT_MAPPER.convertValue(newContextData, new TypeReference<>() {
         });
-        convertValue.putAll(context);
-        context = convertValue;
+        HashMap<String, Object> newContext = new HashMap<>(context);
+        convertValue.forEach((key, value) -> {
+            if (value instanceof String stringValue) {
+                value = TemplateRuntime.eval(stringValue, context);
+            }
+            newContext.put(key, value);
+        });
+        return SampleNodeContext.withMap(newContext);
     }
 
     private Object get(String key) {
