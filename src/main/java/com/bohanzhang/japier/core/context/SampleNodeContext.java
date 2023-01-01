@@ -8,6 +8,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.Map;
 
 @Data
@@ -35,6 +36,14 @@ public class SampleNodeContext implements NodeContext {
     @Override
     public <T> T get(String key, Class<T> tClass) {
         return OBJECT_MAPPER.convertValue(get(key), tClass);
+    }
+
+    @Override
+    public void merge(Object newContextData) {
+        HashMap<String, Object> convertValue = OBJECT_MAPPER.convertValue(newContextData, new TypeReference<>() {
+        });
+        convertValue.putAll(context);
+        context = convertValue;
     }
 
     private Object get(String key) {

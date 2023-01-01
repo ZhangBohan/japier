@@ -1,8 +1,8 @@
 package com.bohanzhang.japier.taskhandler.github;
 
 import com.bohanzhang.japier.core.context.NodeContext;
+import com.bohanzhang.japier.core.node.DefaultNodeHandler;
 import com.bohanzhang.japier.core.node.Node;
-import com.bohanzhang.japier.core.node.NodeHandler;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -10,7 +10,7 @@ import org.springframework.web.client.RestTemplate;
 
 @Component("github-lookup")
 @Slf4j
-public class GitHubLookupNodeHandler implements NodeHandler<User> {
+public class GitHubLookupNodeHandler implements DefaultNodeHandler<User> {
 
 
     @Autowired

@@ -15,9 +15,11 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.web.client.RestTemplate;
 
+import java.util.Map;
 import java.util.concurrent.ExecutionException;
 
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.endsWith;
 
 @Slf4j
 @ActiveProfiles("test")
@@ -47,17 +49,19 @@ class JapierApplicationTests {
 		// Start the clock
 		long start = System.currentTimeMillis();
 		User user = new User();
+		user.setName("test");
 
-		Mockito.when(restTemplate.getForObject(any(), any()))
+		Mockito.when(restTemplate.getForObject(endsWith("bohan"), any()))
           .thenReturn(user);
 
 		// Kick of multiple, asynchronous lookups
-		User page1 = gitHubLookupNodeHandler.handle(null, SampleNodeContext.EMPTY);
+		User result = gitHubLookupNodeHandler.handle(null, SampleNodeContext.
+				builder().
+				context(Map.of("user", "bohan")).
+				build());
 
-		// Print results, including elapsed time
-		log.info("Elapsed time: " + (System.currentTimeMillis() - start));
-		log.info("--> " + page1);
-
+		log.info("--> " + result);
+		Assertions.assertEquals("test", result.getName());
 	}
 
 }

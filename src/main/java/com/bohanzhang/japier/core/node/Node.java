@@ -11,4 +11,6 @@ public class Node {
     private String id;
     private String name;
     private String description;
+
+    private String nodeType;
 }
