@@ -58,6 +58,11 @@ public class SampleNodeContext implements NodeContext {
         return SampleNodeContext.withMap(newContext);
     }
 
+    @Override
+    public boolean getBoolean(String condition) {
+        return get(condition, Boolean.class);
+    }
+
     private Object get(String key) {
         return context.get(key);
     }

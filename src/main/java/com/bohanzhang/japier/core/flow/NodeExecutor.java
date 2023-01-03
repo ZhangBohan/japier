@@ -4,6 +4,7 @@ import com.bohanzhang.japier.core.context.NodeContext;
 import com.bohanzhang.japier.core.node.DefaultNodeHandler;
 import com.bohanzhang.japier.core.node.Node;
 import com.bohanzhang.japier.core.node.NodeHandler;
+import com.bohanzhang.japier.taskhandler.logic.IFNodeHandler;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Service;
@@ -38,6 +39,10 @@ public class NodeExecutor {
     }
 
     public Object asyncExecute(@NonNull List<Node> nodes, NodeContext context) {
+        if (nodes.isEmpty()) {
+            return null;
+        }
+
         Object result = null;
         for (Node node : nodes) {
             String nodeType = node.getNodeType();
@@ -47,6 +52,12 @@ public class NodeExecutor {
                 NodeContext executeNodeContext = context.merge(node.getParams());
                 result = handler.handle(node, executeNodeContext);
                 context = context.merge(Map.of(node.getCode(), result));
+            } else if (nodeHandler instanceof IFNodeHandler handler) {
+                NodeContext executeNodeContext = context.merge(node.getParams());
+                if (Boolean.TRUE.equals(handler.handle(node, executeNodeContext))) {
+                    result = asyncExecute(node.getSubNodes(), executeNodeContext);
+                    context = context.merge(Map.of(node.getCode(), result));
+                }
             }
         }
         return result;

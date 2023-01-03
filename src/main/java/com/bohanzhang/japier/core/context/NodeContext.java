@@ -9,4 +9,6 @@ public interface NodeContext {
     <T> T get(String key, Class<T> tClass);
 
     NodeContext merge(Object newContextData);
+
+    boolean getBoolean(String condition);
 }

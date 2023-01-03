@@ -5,6 +5,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -24,4 +25,6 @@ public class Node {
     private String code;
 
     private Map<String, Object> params;
+
+    private List<Node> subNodes;
 }

@@ -54,4 +54,44 @@ class NodeExecutorTest extends BaseTest {
         log.info("result: {}", result);
         Assertions.assertNotNull(result);
     }
+
+    @Test
+    void testIf() throws ExecutionException, InterruptedException {
+        User user = new User();
+        user.setName("bohan");
+
+        Mockito.when(restTemplate.getForObject(endsWith("bohan"), any()))
+                .thenReturn(user);
+
+        Node node2 = Node.builder().nodeType("github-lookup").code("g2").params(Map.of("user", "bohan")).build();
+        Node node = Node.builder()
+                .nodeType("if").code("g1")
+                .params(Map.of("condition", "${1 > 0}"))
+                .subNodes(List.of(node2))
+                .build();
+        CompletableFuture<Object> future = executor.execute(List.of(node), SampleNodeContext.EMPTY);
+        Object result = future.get();
+        log.info("result: {}", result);
+        Assertions.assertNotNull(result);
+    }
+
+    @Test
+    void testIfNotMatch() throws ExecutionException, InterruptedException {
+        User user = new User();
+        user.setName("bohan");
+
+        Mockito.when(restTemplate.getForObject(endsWith("bohan"), any()))
+                .thenReturn(user);
+
+        Node node2 = Node.builder().nodeType("github-lookup").code("g2").params(Map.of("user", "bohan")).build();
+        Node node = Node.builder()
+                .nodeType("if").code("g1")
+                .params(Map.of("condition", "${1 > 2}"))
+                .subNodes(List.of(node2))
+                .build();
+        CompletableFuture<Object> future = executor.execute(List.of(node), SampleNodeContext.EMPTY);
+        Object result = future.get();
+        log.info("result: {}", result);
+        Assertions.assertNull(result);
+    }
 }
