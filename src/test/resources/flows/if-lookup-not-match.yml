@@ -1,0 +1,9 @@
+- nodeType: "if"
+  code: "g1"
+  params:
+    condition: "${1 > 2}"
+  subNodes:
+    - nodeType: "github-lookup"
+      code: "g2"
+      params:
+        user: "bohan"

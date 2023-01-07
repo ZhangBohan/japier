@@ -1,0 +1,4 @@
+- nodeType: "github-lookup"
+  code: "g1"
+  params:
+    user: "bohan"

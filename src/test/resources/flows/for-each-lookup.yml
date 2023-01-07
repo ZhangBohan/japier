@@ -1,0 +1,10 @@
+- nodeType: "for-each"
+  code: "g1"
+  params:
+    inputList:
+      - user: "bohan"
+  subNodes:
+    - nodeType: "github-lookup"
+      code: "g2"
+      params:
+        user: "${$item.user}"
