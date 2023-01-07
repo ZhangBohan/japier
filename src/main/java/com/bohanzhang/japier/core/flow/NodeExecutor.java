@@ -1,9 +1,11 @@
 package com.bohanzhang.japier.core.flow;
 
 import com.bohanzhang.japier.core.context.NodeContext;
+import com.bohanzhang.japier.core.context.SampleNodeContext;
 import com.bohanzhang.japier.core.node.DefaultNodeHandler;
 import com.bohanzhang.japier.core.node.Node;
 import com.bohanzhang.japier.core.node.NodeHandler;
+import com.bohanzhang.japier.taskhandler.logic.ForEachNodeHandler;
 import com.bohanzhang.japier.taskhandler.logic.IFNodeHandler;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.lang.NonNull;
@@ -56,6 +58,17 @@ public class NodeExecutor {
                 NodeContext executeNodeContext = context.merge(node.getParams());
                 if (Boolean.TRUE.equals(handler.handle(node, executeNodeContext))) {
                     result = asyncExecute(node.getSubNodes(), executeNodeContext);
+                    context = context.merge(Map.of(node.getCode(), result));
+                }
+            } else if (nodeHandler instanceof ForEachNodeHandler handler) {
+                NodeContext executeNodeContext = context.merge(node.getParams());
+                List<Object> list = handler.handle(node, executeNodeContext);
+                SampleNodeContext sampleNodeContext = (SampleNodeContext) executeNodeContext;
+                for (int i = 0; i < list.size(); i++) {
+                    sampleNodeContext.put("$index", i);
+                    sampleNodeContext.put("$item", list.get(i));
+                    List<Node> subNodes = node.getSubNodes();
+                    result = asyncExecute(subNodes, sampleNodeContext);
                     context = context.merge(Map.of(node.getCode(), result));
                 }
             }

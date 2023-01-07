@@ -94,4 +94,24 @@ class NodeExecutorTest extends BaseTest {
         log.info("result: {}", result);
         Assertions.assertNull(result);
     }
+
+    @Test
+    void testForEach() throws ExecutionException, InterruptedException {
+        User user = new User();
+        user.setName("bohan");
+
+        Mockito.when(restTemplate.getForObject(endsWith("bohan"), any()))
+                .thenReturn(user);
+
+        Node node2 = Node.builder().nodeType("github-lookup").code("g2").params(Map.of("user", "${$item.user}")).build();
+        Node node = Node.builder()
+                .nodeType("for-each").code("g1")
+                .params(Map.of("inputList", List.of(Map.of("user", "bohan"))))
+                .subNodes(List.of(node2))
+                .build();
+        CompletableFuture<Object> future = executor.execute(List.of(node), SampleNodeContext.EMPTY);
+        Object result = future.get();
+        log.info("result: {}", result);
+        Assertions.assertNotNull(result);
+    }
 }

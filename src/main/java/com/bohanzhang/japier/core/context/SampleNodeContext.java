@@ -38,6 +38,10 @@ public class SampleNodeContext implements NodeContext {
         return OBJECT_MAPPER.convertValue(get(key), typeReference);
     }
 
+    public void put(String key, Object value) {
+        context.put(key, value);
+    }
+
     @Override
     public <T> T get(String key, Class<T> tClass) {
         return OBJECT_MAPPER.convertValue(get(key), tClass);
