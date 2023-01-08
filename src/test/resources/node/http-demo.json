@@ -1,0 +1,26 @@
+{
+  "args": {
+    "user": "bohan"
+  },
+  "data": "{\"foo\":\"bar\"}",
+  "files": {
+
+  },
+  "form": {
+
+  },
+  "headers": {
+    "Accept": "application/json, application/*+json",
+    "Content-Length": "13",
+    "Content-Type": "application/json",
+    "Host": "httpbin.org",
+    "User-Agent": "Java/18.0.1.1",
+    "X-Amzn-Trace-Id": "Root=1-63baa12b-1cde75da3ec60e9a669da924",
+    "X-Requestid": "123456"
+  },
+  "json": {
+    "foo": "bar"
+  },
+  "origin": "103.152.220.44",
+  "url": "https://httpbin.org/post?user=bohan"
+}

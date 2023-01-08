@@ -11,6 +11,8 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.web.client.RestTemplate;
 
 import java.util.List;
 import java.util.Map;
@@ -22,6 +24,9 @@ import static org.mockito.ArgumentMatchers.endsWith;
 
 @Slf4j
 class NodeExecutorTest extends BaseTest {
+
+    @MockBean
+    protected RestTemplate restTemplate;
 
     @Autowired
     private NodeExecutor executor;

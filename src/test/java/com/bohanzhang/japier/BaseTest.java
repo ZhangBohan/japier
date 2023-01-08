@@ -9,10 +9,8 @@ import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.util.ResourceUtils;
-import org.springframework.web.client.RestTemplate;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -31,13 +29,21 @@ public abstract class BaseTest {
 			.setSerializationInclusion(JsonInclude.Include.NON_NULL)
 			.findAndRegisterModules();
 
-	@MockBean
-	protected RestTemplate restTemplate;
-
 	protected <T> T getYamlResource(String resourcePath, TypeReference<T> typeReference) {
 		try {
 			File file = ResourceUtils.getFile(ResourceUtils.CLASSPATH_URL_PREFIX + resourcePath);
 			return YAML_MAPPER.readValue(file, typeReference);
+		} catch (FileNotFoundException e) {
+			throw new JapierException("resource not found", e);
+		} catch (IOException e) {
+			throw new JapierException("getYamlResource read value error", e);
+		}
+	}
+
+	protected <T> T getJsonResource(String resourcePath, TypeReference<T> typeReference) {
+		try {
+			File file = ResourceUtils.getFile(ResourceUtils.CLASSPATH_URL_PREFIX + resourcePath);
+			return mapper.readValue(file, typeReference);
 		} catch (FileNotFoundException e) {
 			throw new JapierException("resource not found", e);
 		} catch (IOException e) {
